@@ -3,11 +3,12 @@ import { useEffect } from "react";
 
 export const LogoContainer = ({
   src,
-  // alt,
-  // width,
-  // height,
-  // tailwindCss,
-}: any) => {
+  background
+}: // alt,
+// width,
+// height,
+// tailwindCss,
+any) => {
   const { selected } = useNode((state) => ({
     selected: state.events.selected,
     dragged: state.events.dragged,
@@ -22,7 +23,7 @@ export const LogoContainer = ({
   }, [selected]);
 
   return (
-    <a onClick={() => null} href="#" className="flex items-center">
+    <a style={{backgroundColor:background}} onClick={() => null} href="#" className="flex items-center   ">
       <img src={src} className="mr-3 h-6 sm:h-9" alt="Flowbite Logo" />
       <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
         Flowbite

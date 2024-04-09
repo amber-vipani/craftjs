@@ -1,37 +1,40 @@
 import { Element, Frame, useEditor } from "@craftjs/core";
-import { useEffect, useMemo, useState } from "react";
-import { Container } from "../components/Container";
-import EditorWrapper from "../components/EditorWrapper";
-import { SettingsPanel } from "../components/SetttingsPanel";
-import { Toolbox } from "../components/Toolbox";
-import { Topbar } from "../components/Topbar";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../configs/firebase";
-import lz from "lzutf8";
 import {
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { doc, getDoc } from "firebase/firestore";
+import lz from "lzutf8";
+import { useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { Container } from "../components/Container";
+import EditorWrapper from "../components/EditorWrapper";
+import { SettingsPanel } from "../components/SetttingsPanel";
+import { Toolbox } from "../components/Toolbox";
+import { Topbar } from "../components/Topbar";
+import { db } from "../configs/firebase";
 
 function CraftEditor() {
   const { actions } = useEditor();
   const [elements, setElements] = useState<any>([]);
+  const location = useLocation();
+  const paths = location.pathname.split("/").filter(Boolean);
+  console.log(paths[0]);
 
   useEffect(() => {
     const fetch = async () => {
       const businessId = "O7YlGlcvULAgcDlxMYvw";
-      const docRef = doc(
-        db,
-        `websites/${businessId}/crafts`,
-        "365cmb0Eio393mWBcR1j"
-      );
+      const docRef = doc(db, `websites/${businessId}/crafts`, "website-1");
       const snapShot = await getDoc(docRef);
-      const { loadState }: any = snapShot.data();
-      const json = lz.decompress(lz.decodeBase64(loadState));
+      const webPages: any = snapShot.data();
+      console.log(webPages);
+      const json = lz.decompress(
+        lz.decodeBase64(webPages?.[(paths[0] as string) ?? "home"]?.loadState)
+      );
 
-      const parseJson = JSON.parse(json);
+      const parseJson = JSON.parse(json || "{}");
       function buildHierarchy(parentId: any): any {
         const parent = parseJson[parentId];
         const children = Object.keys(parseJson)
@@ -97,7 +100,7 @@ function CraftEditor() {
 
   return (
     <div className="mx-auto w-800">
-      <a href="/preview">preview</a>
+      <a href={"/preview/" + paths[0]}>preview</a>
       <h5 className="text-2xl mt-4 text-center">Basic Page Editor</h5>
       <Topbar />
       <div className="grid grid-cols-1 md:grid-cols-4 gap-5 md:gap-0 mt-5 bg-red-50">

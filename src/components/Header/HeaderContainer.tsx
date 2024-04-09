@@ -13,18 +13,16 @@ export const HeaderContainer = ({
     connectors: { connect, drag },
   } = useNode();
   return (
-    <header
+    <div
+    onClick={(e)=>e.stopPropagation()}
       {...props}
-      ref={(ref) => connect(drag(ref as any))}
+      ref={(ref: any) => connect(drag(ref))}
       style={{ backgroundColor: background }}
-      // className={tailwindCss}
+      className={'w-full'}
+      // className={`p-${padding}   h-full m-5 p-5`}
     >
-      <nav className="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
-        <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
-          {children}
-        </div>
-      </nav>
-    </header>
+      {children}
+    </div>
   );
 };
 // export const ContainerSettings = ({ isDeletable = false }) => {
@@ -47,7 +45,7 @@ export const ContainerSettings = () => {
         </label>
         <SketchPicker
           color={background}
-          onChangeComplete={(color: any) => {
+          onChangeComplete={(color) => {
             setProp((props: any) => (props.background = color.hex), 500);
           }}
         />
@@ -86,12 +84,13 @@ export const ContainerSettings = () => {
 };
 
 export const ContainerDefaultProps = {
-  background: "white",
+  background: "gray",
   padding: 3,
+  tailwindCss: "h-64",
 };
 
 HeaderContainer.craft = {
-  displayName: "Tailwind header",
+  displayName: "Tailwind card container",
   props: ContainerDefaultProps,
   related: {
     settings: ContainerSettings,

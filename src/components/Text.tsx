@@ -1,11 +1,18 @@
 import { useNode } from "@craftjs/core";
 import { useEffect, useState } from "react";
+import ContentEditable from "react-contenteditable";
 
-export const Text = ({ text, fontSize, textAlign, tailwindCss, ...props }:any) => {
+export const Text = ({
+  text,
+  fontSize,
+  textAlign,
+  tailwindCss,
+  ...props
+}: any) => {
   const {
     connectors: { connect, drag },
     selected,
-    // actions: { setProp },
+    actions: { setProp },
   } = useNode((state) => ({
     selected: state.events.selected,
     dragged: state.events.dragged,
@@ -22,16 +29,38 @@ export const Text = ({ text, fontSize, textAlign, tailwindCss, ...props }:any) =
   }, [selected]);
 
   return (
-    <h1
-      {...props}
-      ref={(ref:any) => connect(drag(ref))}
-      onClick={() => selected && setEditable(true)}
-      className={tailwindCss}
-      contentEditable={editable}
-      // className={`${selected ? "border-2 border-blue-500" : ""} p-2 rounded-md`}
-    >
-      {text}
-    </h1>
+    <div
+    {...props}
+    ref={(ref:any) => connect(drag(ref))}
+    onClick={() => selected && setEditable(true)}
+  >
+    <ContentEditable
+      html={text}
+      disabled={!editable}
+      onChange={(e) =>
+        setProp(
+          (props:any) =>
+            (props.text = e.target.value.replace(/<\/?[^>]+(>|$)/g, '')),
+          500
+        )
+      }
+      tagName="p"
+      style={{ fontSize: `${fontSize}px`, textAlign }}
+    />
+  </div>
+
+    // <h1
+    //   {...props}
+    //   ref={(ref: any) => connect(drag(ref))}
+    //   onClick={() => selected && setEditable(true)}
+    //   className={tailwindCss}
+    //   contentEditable={editable}
+    //   onKeyDown={(e) => {
+    //     setProp((props: any) => (props.text = e.target.innerText), 1000);
+    //   }}
+    // >
+    //   {text}
+    // </h1>
   );
 };
 
@@ -39,11 +68,11 @@ const TextSettings = () => {
   const {
     actions: { setProp },
     fontSize,
-    tailwindCss
+    tailwindCss,
   } = useNode((node) => ({
     text: node.data.props.text,
     fontSize: node.data.props.fontSize,
-    tailwindCss:node.data.props.tailwindCss
+    tailwindCss: node.data.props.tailwindCss,
   }));
 
   return (
@@ -57,7 +86,10 @@ const TextSettings = () => {
         min={1}
         max={50}
         onChange={(e) => {
-          setProp((props:any) => (props.fontSize = parseInt(e.target.value)), 1000);
+          setProp(
+            (props: any) => (props.fontSize = parseInt(e.target.value)),
+            1000
+          );
         }}
         className="w-full"
       />
@@ -68,7 +100,7 @@ const TextSettings = () => {
         type="text"
         value={tailwindCss || ""}
         onChange={(e) => {
-          setProp((props:any) => (props.tailwindCss = e.target.value), 1000);
+          setProp((props: any) => (props.tailwindCss = e.target.value), 1000);
         }}
         className="w-full"
       />

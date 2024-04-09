@@ -5,8 +5,8 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/preview" element={<Renderer />} />
-        <Route index path="/" element={<CraftEditor />} />
+        <Route path="/preview/*" element={<Renderer />} />
+        <Route index path="*" element={<CraftEditor />} />
       </Routes>
     </Router>
   );

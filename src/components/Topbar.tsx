@@ -3,6 +3,7 @@ import copy from "copy-to-clipboard";
 import { doc, updateDoc } from "firebase/firestore";
 import lz from "lzutf8";
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { db } from "../configs/firebase";
 
 export const Topbar = () => {
@@ -17,19 +18,22 @@ export const Topbar = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>();
   const [stateToLoad, setStateToLoad] = useState<any>(null);
-
+  const location = useLocation();
+  const paths = location.pathname.split("/").filter(Boolean);
+  const [webPageName, setWebPageName] = useState<any>(paths[0] ?? "home");
   const saveAndCopy = async () => {
     const json = query.serialize();
     copy(lz.encodeBase64(lz.compress(json)));
     localStorage.setItem("loadState", lz.encodeBase64(lz.compress(json)));
     //saving in firebase
     const businessId = "O7YlGlcvULAgcDlxMYvw";
-    const docRef = doc(
-      db,
-      `websites/${businessId}/crafts`,
-      "365cmb0Eio393mWBcR1j"
-    );
-    await updateDoc(docRef, { loadState: lz.encodeBase64(lz.compress(json)) });
+    const docRef = doc(db, `websites/${businessId}/crafts`, "website-1");
+    await updateDoc(docRef, {
+      [webPageName]: {
+        loadState: lz.encodeBase64(lz.compress(json)),
+        webPageName: webPageName,
+      },
+    });
     setSnackbarMessage("State copied to clipboard");
   };
 
@@ -72,6 +76,14 @@ export const Topbar = () => {
             </button>
           </div>
           <div>
+            <input
+              type="text"
+              placeholder="web page name"
+              value={webPageName}
+              onChange={(e) => setWebPageName(e.target.value)}
+            />
+          </div>
+          <div>
             <button
               className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
               onClick={saveAndCopy}
@@ -90,7 +102,9 @@ export const Topbar = () => {
       <div>
         <div className="flex items-center justify-center">
           <div
-            className={`z-50 dialog-container ${dialogOpen ? "block" : "hidden"}`}
+            className={`z-50 dialog-container ${
+              dialogOpen ? "block" : "hidden"
+            }`}
           >
             <div className="dialog-overlay fixed inset-0 bg-black opacity-50"></div>
             <div className="dialog-content absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg">
@@ -128,7 +142,7 @@ export const Topbar = () => {
         <div className="toast toast-success mt-4">
           <button
             className="btn btn-clear float-right"
-            onClick={() => setSnackbarMessage('')}
+            onClick={() => setSnackbarMessage("")}
           ></button>
           {snackbarMessage}
         </div>

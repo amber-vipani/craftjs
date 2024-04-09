@@ -15,9 +15,14 @@ import { TailwindSubCardContainer } from "./TailwindCard/TailwindCardSubContaine
 import { ImageCard } from "./TailwindCard/ImageCard";
 import { Header } from "./Header";
 import { LogoContainer } from "./Header/LogoContainer";
+import { Link } from "./Link";
+import { HeaderContainer } from "./Header/HeaderContainer";
 const EditorWrapper =
-  (Component:any, childProp = { enabled: true }) =>
-  (props:any) => {
+  (Component: any, childProp = { enabled: true }) =>
+  (props: any) => {
+    console.log(props)
+    // console.log(childProp?.enabled)
+    // props.enabled = childProp?.enabled
     return (
       <Editor
         enabled={childProp?.enabled}
@@ -39,10 +44,12 @@ const EditorWrapper =
           TailwindSubCardContainer,
           ImageCard,
           Header,
-          LogoContainer
+          HeaderContainer,
+          LogoContainer,
+          Link,
         }}
       >
-        <Component {...props} />
+        <Component {...props}   />
       </Editor>
     );
   };
