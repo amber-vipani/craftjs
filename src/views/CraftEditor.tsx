@@ -100,7 +100,7 @@ function CraftEditor() {
 
   return (
     <div className="mx-auto w-800">
-      <a href={"/preview/" + paths[0]}>preview</a>
+      <a href={"/preview/" + paths[0] ?? 'home'}>preview</a>
       <h5 className="text-2xl mt-4 text-center">Basic Page Editor</h5>
       <Topbar />
       <div className="grid grid-cols-1 md:grid-cols-4 gap-5 md:gap-0 mt-5 bg-red-50">
